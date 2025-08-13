@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowQuests - Recuperar Senha</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styleTelaInicial.css">
+    <style>
+        .card-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #363636;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="has-text-centered" style="margin-bottom: 1.5rem;">
+        <img src="images/FlowQuests-Icon.png" alt="Logo da FlowQuests" style="max-width: 280px;">
+    </div>
+
+    <div class="login-card">
+        <p class="card-title">Digite Seu E-mail Para recuperação!</p>
+
+        <div class="field">
+            <div class="control">
+                <input class="input" type="email" placeholder="Seu email">
+            </div>
+        </div>
+
+        <div class="field is-grouped is-grouped-centered" style="margin-top: 2rem;">
+            <p class="control">
+                <a href="index.html" class="button is-light">
+                    Cancelar
+                </a>
+            </p>
+            <p class="control">
+                <!-- Adicionamos um ID ao botão para selecioná-lo no JS -->
+                <button id="reset-button" class="button is-dark">
+                    <strong>Reset Password</strong>
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- SCRIPT ADICIONADO -->
+    <script>
+        // Seleciona o botão pelo ID que criamos
+        const resetButton = document.getElementById('reset-button');
+
+        // Adiciona um "ouvinte" para o evento de clique
+        resetButton.addEventListener('click', function() {
+            // Em vez de um link normal, usamos JS para redirecionar
+            // para a página de login com o parâmetro na URL.
+            window.location.href = 'index.html?recovery_sent=true';
+        });
+    </script>
+
+</body>
+</html>

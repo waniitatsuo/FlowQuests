@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowQuests - Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Caminhos corrigidos para o servidor Node.js -->
+    <link rel="stylesheet" href="/css/styleTelaInicial.css">
+    <link rel="stylesheet" href="/css/styleLogin.css">
+    <style>
+        /* Estilos da notificação que faltavam */
+        .feedback-notification-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            transform: translateY(-150%);
+            transition: transform 0.5s ease-in-out;
+        }
+        .feedback-notification-container.is-visible {
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="feedback-notification" class="feedback-notification-container">
+        <div id="notification-box" class="notification is-light has-text-centered">
+            <span class="icon"><i id="notification-icon" class="fas"></i></span>
+            <strong id="notification-text"></strong>
+        </div>
+    </div>
+
+    <div class="has-text-centered" style="margin-bottom: 1.5rem;">
+        <img src="/images/FlowQuests-Icon.png" alt="Logo da FlowQuests" style="max-width: 280px;">
+    </div>
+
+    <div class="login-card">
+        <form action="/login" method="POST">
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control has-icons-left">
+                    <input name="email" class="input" type="email" placeholder="Seu email" required>
+                    <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Senha</label>
+                <div class="control has-icons-left">
+                    <input name="senha" class="input" type="password" placeholder="Sua senha" required>
+                    <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
+                </div>
+                <a href="/esqueci-senha" class="forgot-password">Esqueceu a senha?</a>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="button is-link is-fullwidth">
+                    <strong>Login</strong>
+                </button>
+            </div>
+        </form>
+        <div class="has-text-centered" style="margin-top: 1.5rem;">
+            <p>Não tem uma conta? <a href="/cadastrar">Registre-se</a></p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const notification = document.getElementById('feedback-notification');
+            const notificationBox = document.getElementById('notification-box');
+            const notificationText = document.getElementById('notification-text');
+            const notificationIcon = document.getElementById('notification-icon');
+            
+            // Pega a mensagem da URL (enviada pelo servidor Node.js)
+            const message = "<%- locals.message || '' %>";
+            let displayMessage = '';
+
+            // Remove classes de cor e ícone anteriores para evitar conflitos
+            notificationBox.classList.remove('is-success', 'is-danger');
+            notificationIcon.classList.remove('fa-check-circle', 'fa-times-circle');
+
+            if (message === 'success') {
+                displayMessage = 'Conta criada com sucesso! Faça o login.';
+                notificationBox.classList.add('is-success');
+                notificationIcon.classList.add('fa-check-circle');
+            } else if (message === 'recovery') {
+                displayMessage = 'E-mail de recuperação enviado com sucesso!';
+                notificationBox.classList.add('is-success');
+                notificationIcon.classList.add('fa-check-circle');
+            } else if (message === 'login_failed') {
+                displayMessage = 'Email ou senha incorretos. Tente novamente.';
+                notificationBox.classList.add('is-danger'); // Muda a cor para vermelho
+                notificationIcon.classList.add('fa-times-circle');
+            }
+
+            if (displayMessage) {
+                notificationText.textContent = displayMessage;
+                notification.classList.add('is-visible');
+                setTimeout(() => {
+                    notification.classList.remove('is-visible');
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

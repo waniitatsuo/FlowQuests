@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FlowQuests</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styleDashboard.css">
+        <style>
+        /* Estilo para conquistas BLOQUEADAS */
+        .reward-card {
+            background-color: #e9ecef;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        .reward-card .icon {
+            color: #adb5bd;
+        }
+        .reward-card h4 {
+            color: #495057;
+        }
+        .reward-card p {
+            color: #6c757d;
+        }
+
+        /* Estilo para conquistas DESBLOQUEADAS */
+        .reward-card.unlocked {
+            background-color: white;
+            opacity: 1;
+            border: 2px solid #48c78e;
+        }
+        .reward-card.unlocked .icon {
+            color: #fbbF24;
+        }
+        .reward-card.unlocked h4 {
+            color: #2d3748;
+        }
+        .reward-card.unlocked p {
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard-container" class="dashboard-container">
+        <aside id="sidebar" class="sidebar">
+            <!-- ... (código da sidebar) ... -->
+            <div style="position: relative;">
+                <div id="profile-button" class="profile">
+                    <img src="https://placehold.co/50x50/e2e8f0/e2e8f0" alt="Avatar do utilizador">
+                    <span class="name"><%= usuario.nome %></span>
+                </div>
+                <div id="profile-menu" class="profile-menu">
+                    <div class="profile-menu-header">
+                        <img src="https://placehold.co/60x60/e2e8f0/e2e8f0" alt="Avatar do utilizador">
+                        <div class="profile-menu-info">
+                            <p class="username"><%= usuario.nome %> #<%= usuario.id %></p>
+                            <p class="level">Level 1</p>
+                        </div>
+                    </div>
+                    <div class="profile-menu-body">
+                        <p class="menu-label">Menu</p>
+                        <ul class="menu-list">
+                            <li><a><span class="icon"><i class="fas fa-cog"></i></span> Configurações</a></li>
+                            <li><a><span class="icon"><i class="fas fa-user-friends"></i></span> Amigos</a></li>
+                            <li><a><span class="icon"><i class="fas fa-store"></i></span> Loja</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <a href="/" class="logout-link">
+                <img src="/images/SairButton.png" alt="Botão Sair">
+            </a>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <button id="sidebar-toggle-button" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-top">
+                    <div>
+                        <h1 class="header-title">Gestão de Tarefas</h1>
+                        <p class="header-points">Pontos Hoje: <strong><%= usuario.xpTotal %></strong></p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div id="notification-button" class="notification-icon-wrapper">
+                            <span class="icon is-large has-text-white"><i class="fas fa-bell fa-2x"></i></span>
+                            <span id="notification-badge" class="badge is-danger">1</span>
+                            <div id="notification-menu" class="notification-menu">
+                                <div class="notification-menu-header">Notificações</div>
+                                <div class="notification-item">
+                                    <span class="icon"><i class="fas fa-info-circle"></i></span>
+                                    <p><strong>Bem-vindo ao FlowQuests!</strong><span>Crie a sua primeira tarefa.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="xp-card">
+                            <i class="fas fa-medal"></i>
+                            <div class="xp-label">Total de XP</div>
+                            <div class="xp-total"><%= usuario.xpTotal %></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <progress id="xp-progress-bar" class="progress is-white is-small" value="<%= usuario.xpTotal %>" max="500"></progress>
+                    <div class="progress-labels">
+                        <span id="progress-start-label">0</span>
+                        <span id="progress-end-label">500</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="tasks-area">
+                <div class="tabs is-centered">
+                    <ul id="tabs-nav">
+                        <li class="is-active" data-tab="tarefas"><a>Tarefas Pendentes</a></li>
+                        <li data-tab="recompensas"><a>Recompensas</a></li>
+                    </ul>
+                </div>
+
+                <div id="tarefas-content" class="tab-content is-active">
+                    <div id="tasks-container">
+                        <% tarefas.forEach(tarefa => { %>
+                            <div class="task-card <%= tarefa.categoria %>" data-id="<%= tarefa.id %>">
+                                <h3><%= tarefa.titulo.toUpperCase() %></h3>
+                                <p><strong>Data:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
+                                <p><strong>Horário:</strong> <%= tarefa.horaPrazo %></p>
+                                <div class="task-footer">
+                                    <p><strong>Recompensa:</strong> <%= tarefa.recompensaXp %>XP</p>
+                                    <img src="/images/thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon">
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+                
+                <div id="recompensas-content" class="tab-content">
+                    <div class="rewards-grid">
+                        <% todasAsConquistas.forEach(conquista => { %>
+                            <% 
+                            const desbloqueada = usuario.conquistas && 
+                                Array.isArray(usuario.conquistas) && 
+                                usuario.conquistas.some(c => c.id === conquista.id);
+                        %>
+    
+                        <div class="reward-card <%= desbloqueada ? 'unlocked' : '' %>">
+                            <span class="icon"><i class="<%= conquista.icone %>"></i></span>
+                            <h4><%= conquista.nome %></h4>
+                            <p><%= conquista.descricao %></p>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <button id="add-task-button" class="fab-button">+</button>
+    </div>
+    
+    <div id="add-task-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button">&times;</button>
+            <h2 class="title is-4">Criar Nova tarefa</h2>
+            <form id="task-form">
+                <div class="field"><label class="label">Nome da Tarefa</label><div class="control"><input id="task-name" class="input" type="text" required></div></div>
+                <div class="field"><label class="label">Data da Tarefa</label><div class="control"><input id="task-date" class="input" type="date" required></div></div>
+                <div class="field"><label class="label">Horário da Tarefa</label><div class="control"><input id="task-time" class="input" type="time" required></div></div>
+                <div class="field"><label class="label">Categoria</label><div class="control"><div class="select is-fullwidth"><select id="task-category" required><option value="remedios">Remédios</option><option value="atividades">Atividades</option><option value="trabalhos">Trabalhos</option><option value="eventos">Eventos</option></select></div></div></div>
+                <div class="field" style="margin-top: 2rem;"><div class="control"><button type="submit" class="button is-dark is-fullwidth">Submit</button></div></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-task-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="title is-4 has-text-centered">Confirmar Tarefa</h2>
+            <p class="has-text-centered" style="margin-bottom: 2rem;">Você tem certeza que completou esta tarefa?</p>
+            <div class="field is-grouped is-grouped-centered">
+                <p class="control"><button id="cancel-completion-button" class="button is-light">Cancelar</button></p>
+                <p class="control"><button id="confirm-completion-button" class="button is-success">Confirmar</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('sidebar-toggle-button');
+            const sidebar = document.getElementById('sidebar');
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const toggleIcon = toggleButton.querySelector('i');
+            const profileButton = document.getElementById('profile-button');
+            const profileMenu = document.getElementById('profile-menu');
+            const notificationButton = document.getElementById('notification-button');
+            const notificationMenu = document.getElementById('notification-menu');
+            const notificationBadge = document.getElementById('notification-badge');
+            const addTaskButton = document.getElementById('add-task-button');
+            const addTaskModal = document.getElementById('add-task-modal');
+            const closeAddTaskModalButton = addTaskModal.querySelector('.modal-close-button');
+            const taskForm = document.getElementById('task-form');
+            const tasksContainer = document.getElementById('tasks-container');
+            const confirmTaskModal = document.getElementById('confirm-task-modal');
+            const confirmCompletionButton = document.getElementById('confirm-completion-button');
+            const cancelCompletionButton = document.getElementById('cancel-completion-button');
+            const tabs = document.querySelectorAll('#tabs-nav li');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const progressBar = document.getElementById('xp-progress-bar');
+            const progressStartLabel = document.getElementById('progress-start-label');
+            const progressEndLabel = document.getElementById('progress-end-label');
+            const loggedInUserId = "<%= usuario.id %>";
+            let taskToCompleteId = null; // Mudei para armazenar apenas o ID
+
+            function updateProgressBar() {
+                const currentUserXP = parseInt("<%= usuario.xpTotal %>", 10);
+                const levelSize = 500;
+                const currentLevel = Math.floor(currentUserXP / levelSize);
+                
+                const startXP = currentLevel * levelSize;
+                const endXP = startXP + levelSize;
+                const progressInLevel = currentUserXP - startXP;
+
+                progressBar.value = progressInLevel;
+                progressBar.max = levelSize;
+                progressStartLabel.textContent = startXP;
+                progressEndLabel.textContent = endXP;
+            }
+
+            updateProgressBar();
+
+            tasksContainer.addEventListener('click', (event) => {
+                const completeIcon = event.target.closest('.complete-task-icon');
+                if (completeIcon) {
+                    const taskCard = event.target.closest('.task-card');
+                    taskToCompleteId = taskCard.dataset.id; // Armazena o ID da tarefa
+                    confirmTaskModal.classList.add('is-active');
+                }
+            });
+
+            confirmCompletionButton.addEventListener('click', async () => {
+                if (!taskToCompleteId) return;
+
+                confirmCompletionButton.classList.add('is-loading'); // Mostra o loading no botão
+
+                try {
+                    const response = await fetch(`/api/tarefas/${taskToCompleteId}/completar`, {
+                        method: 'POST'
+                    });
+        
+                    if (!response.ok) {
+                        const error = await response.json();
+                        // Usa a mensagem de erro da API ou uma mensagem padrão
+                        throw new Error(error.message || 'Não foi possível completar a tarefa.');
+                    }
+        
+                    // **CORREÇÃO PRINCIPAL:** Recarrega a página em caso de sucesso.
+                    // Isso garante que todos os dados (XP, tarefas, conquistas) sejam atualizados.
+                    window.location.reload();
+        
+                } catch (error) {
+                    alert('Erro: ' + error.message);
+                } finally {
+                    // Limpa o estado e fecha o modal independentemente do resultado
+                    confirmTaskModal.classList.remove('is-active');
+                    confirmCompletionButton.classList.remove('is-loading');
+                    taskToCompleteId = null;
+                }
+            });
+
+            toggleButton.addEventListener('click', () => {
+                if (window.innerWidth > 768) {
+                    dashboardContainer.classList.toggle('sidebar-collapsed');
+                } else {
+                    sidebar.classList.toggle('is-active');
+                }
+                const isSidebarOpen = sidebar.classList.contains('is-active') || !dashboardContainer.classList.contains('sidebar-collapsed');
+                toggleIcon.className = isSidebarOpen ? 'fas fa-bars' : 'fas fa-chevron-right';
+            });
+
+            profileButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                profileMenu.classList.toggle('is-active');
+            });
+
+            notificationButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                notificationMenu.classList.toggle('is-active');
+                if (notificationMenu.classList.contains('is-active')) {
+                    notificationBadge.style.opacity = '0';
+                }
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!profileMenu.contains(event.target) && !profileButton.contains(event.target)) {
+                    profileMenu.classList.remove('is-active');
+                }
+                if (!notificationMenu.contains(event.target) && !notificationButton.contains(event.target)) {
+                    notificationMenu.classList.remove('is-active');
+                }
+                if (window.innerWidth <= 768 && sidebar.classList.contains('is-active') && !sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+                    sidebar.classList.remove('is-active');
+                }
+            });
+
+            const openAddTaskModal = () => addTaskModal.classList.add('is-active');
+            const closeAddTaskModal = () => addTaskModal.classList.remove('is-active');
+            addTaskButton.addEventListener('click', openAddTaskModal);
+            closeAddTaskModalButton.addEventListener('click', closeAddTaskModal);
+            addTaskModal.addEventListener('click', (event) => {
+                if (event.target === addTaskModal) closeAddTaskModal();
+            });
+
+            const closeConfirmModal = () => {
+                taskToCompleteId = null;
+                confirmTaskModal.classList.remove('is-active');
+            };
+            cancelCompletionButton.addEventListener('click', closeConfirmModal);
+            confirmTaskModal.addEventListener('click', (event) => {
+                if (event.target === confirmTaskModal) closeConfirmModal();
+            });
+
+            taskForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const taskData = {
+                    titulo: document.getElementById('task-name').value,
+                    dataPrazo: document.getElementById('task-date').value,
+                    horaPrazo: document.getElementById('task-time').value,
+                    categoria: document.getElementById('task-category').value,
+                    usuario: { id: loggedInUserId }
+                };
+                try {
+                    const response = await fetch('/api/tarefas', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(taskData)
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                         alert('Erro ao criar tarefa!');
+                    }
+                } catch (error) { 
+                    console.error('Erro:', error); 
+                    alert('Erro ao conectar com o servidor.');
+                }
+            });
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(item => item.classList.remove('is-active'));
+                    tabContents.forEach(content => content.classList.remove('is-active'));
+                    tab.classList.add('is-active');
+                    document.getElementById(tab.dataset.tab + '-content').classList.add('is-active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

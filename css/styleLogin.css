@@ -1,0 +1,55 @@
+body {
+            overflow-x: hidden; 
+        }
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .buttons {
+            margin-top: 1.5rem;
+        }
+
+        /* --- CSS PARA A ANIMAÇÃO DA NOTIFICAÇÃO --- */
+        .recovery-notification-container {
+            position: fixed; /* Fica fixo na tela */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; /* Garante que fique sobre outros elementos */
+            display: flex;
+            justify-content: center;
+            /* A notificação começa escondida acima da tela */
+            transform: translateY(-150%);
+            /* Define a animação de transição */
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        /* Classe que será adicionada via JS para mostrar a notificação */
+        .recovery-notification-container.is-visible {
+            /* Move a notificação para a posição visível */
+            transform: translateY(30%);
+            transition: transform 0.5s ease-out;
+        }
+
+        /* --- CSS PARA A ANIMAÇÃO DA NOTIFICAÇÃO --- */
+        .feedback-notification-container {
+            position: fixed; /* Fica fixo na tela */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; /* Garante que fique sobre outros elementos */
+            display: flex;
+            justify-content: center;
+            /* A notificação começa escondida acima da tela */
+            transform: translateY(-150%);
+            /* Define a animação de transição */
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Classe que será adicionada via JS para mostrar a notificação */
+        .feedback-notification-container.is-visible {
+            transform: translateY(30%);
+            transition: transform 0.5s ease-out;
+        }
