@@ -509,3 +509,36 @@
                 max-width: 320px;
             }
         }
+
+         /* Estilo para conquistas BLOQUEADAS */
+        .reward-card {
+            background-color: #e9ecef;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        .reward-card .icon {
+            color: #adb5bd;
+        }
+        .reward-card h4 {
+            color: #495057;
+        }
+        .reward-card p {
+            color: #6c757d;
+        }
+
+        /* Estilo para conquistas DESBLOQUEADAS */
+        .reward-card.unlocked {
+            background-color: white;
+            opacity: 1;
+            border: 2px solid #48c78e;
+        }
+        .reward-card.unlocked .icon {
+            color: #fbbF24;
+        }
+        .reward-card.unlocked h4 {
+            color: #2d3748;
+        }
+        .reward-card.unlocked p {
+            color: #718096;
+        }
+        

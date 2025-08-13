@@ -7,44 +7,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styleDashboard.css">
-        <style>
-        /* Estilo para conquistas BLOQUEADAS */
-        .reward-card {
-            background-color: #e9ecef;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-        .reward-card .icon {
-            color: #adb5bd;
-        }
-        .reward-card h4 {
-            color: #495057;
-        }
-        .reward-card p {
-            color: #6c757d;
-        }
-
-        /* Estilo para conquistas DESBLOQUEADAS */
-        .reward-card.unlocked {
-            background-color: white;
-            opacity: 1;
-            border: 2px solid #48c78e;
-        }
-        .reward-card.unlocked .icon {
-            color: #fbbF24;
-        }
-        .reward-card.unlocked h4 {
-            color: #2d3748;
-        }
-        .reward-card.unlocked p {
-            color: #718096;
-        }
-    </style>
 </head>
 <body>
     <div id="dashboard-container" class="dashboard-container">
         <aside id="sidebar" class="sidebar">
-            <!-- ... (código da sidebar) ... -->
             <div style="position: relative;">
                 <div id="profile-button" class="profile">
                     <img src="https://placehold.co/50x50/e2e8f0/e2e8f0" alt="Avatar do utilizador">
@@ -112,38 +78,88 @@
             </header>
 
             <section class="tasks-area">
+    
+                <form action="/dashboard" method="GET" class="mb-5">
+                    <input type="hidden" name="userId" value="<%= usuario.id %>">
+                    <div class="field has-addons">
+                        <div class="control is-expanded">
+                            <input class="input" type="text" name="search" placeholder="Pesquisar tarefas por título..." value="<%= search %>">
+                        </div>
+                        <div class="control">
+                            <button type="submit" class="button is-link">
+                                <span class="icon"><i class="fas fa-search"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 <div class="tabs is-centered">
                     <ul id="tabs-nav">
                         <li class="is-active" data-tab="tarefas"><a>Tarefas Pendentes</a></li>
+                        <li data-tab="concluidas"><a>Tarefas Concluídas</a></li>
                         <li data-tab="recompensas"><a>Recompensas</a></li>
                     </ul>
                 </div>
 
                 <div id="tarefas-content" class="tab-content is-active">
                     <div id="tasks-container">
-                        <% tarefas.forEach(tarefa => { %>
-                            <div class="task-card <%= tarefa.categoria %>" data-id="<%= tarefa.id %>">
-                                <h3><%= tarefa.titulo.toUpperCase() %></h3>
-                                <p><strong>Data:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
-                                <p><strong>Horário:</strong> <%= tarefa.horaPrazo %></p>
-                                <div class="task-footer">
-                                    <p><strong>Recompensa:</strong> <%= tarefa.recompensaXp %>XP</p>
-                                    <img src="/images/thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon">
-                                </div>
+                        <% tarefasPendentes.content.forEach(tarefa => { %>
+                        <div class="task-card <%= tarefa.categoria %>">
+                            <h3><%= tarefa.titulo.toUpperCase() %></h3>
+                            <p><strong>Data:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
+                            <p><strong>Horário:</strong> <%= tarefa.horaPrazo %></p>
+                            <div class="task-footer">
+                                <p><strong>Recompensa:</strong> <%= tarefa.recompensaXp %>XP</p>
+                                <img src="/images/thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon" data-id="<%= tarefa.id %>">
                             </div>
+                        </div>
                         <% }) %>
                     </div>
+                    <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+                        <a href="/dashboard?userId=<%= usuario.id %>&search=<%= search %>&pending_page=<%= pendingPage.number - 1 %>&completed_page=<%= completedPage.number %>" 
+                            class="pagination-previous" <%= pendingPage.first ? 'disabled' : '' %>>
+                            Anterior
+                        </a>
+                        <a href="/dashboard?userId=<%= usuario.id %>&search=<%= search %>&pending_page=<%= pendingPage.number + 1 %>&completed_page=<%= completedPage.number %>" 
+                            class="pagination-next" <%= pendingPage.last ? 'disabled' : '' %>>
+                            Próxima
+                        </a>
+                        <ul class="pagination-list">
+                            <li><span class="pagination-link is-current"><%= pendingPage.number + 1 %> de <%= pendingPage.totalPages %></span></li>
+                        </ul>
+                    </nav>
                 </div>
-                
+
+                <div id="concluidas-content" class="tab-content">
+                    <% tarefasConcluidas.content.forEach(tarefa => { %>
+                    <div class="task-card <%= tarefa.categoria %>" style="opacity: 0.7; border-left: 5px solid #48c78e;">
+                        <h3><%= tarefa.titulo.toUpperCase() %></h3>
+                        <p><strong>Concluída em:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
+                        <div class="task-footer">
+                            <p><strong>Recompensa ganha:</strong> <%= tarefa.recompensaXp %>XP</p>
+                        <span class="icon is-medium has-text-success"><i class="fas fa-check-circle fa-lg"></i></span>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+                        <a href="/dashboard?userId=<%= usuario.id %>&search=<%= search %>&pending_page=<%= pendingPage.number %>&completed_page=<%= completedPage.number - 1 %>" 
+                            class="pagination-previous" <%= completedPage.first ? 'disabled' : '' %>>
+                            Anterior
+                        </a>
+                        <a href="/dashboard?userId=<%= usuario.id %>&search=<%= search %>&pending_page=<%= pendingPage.number %>&completed_page=<%= completedPage.number + 1 %>" 
+                            class="pagination-next" <%= completedPage.last ? 'disabled' : '' %>>
+                            Próxima
+                        </a>
+                        <ul class="pagination-list">
+                            <li><span class="pagination-link is-current"><%= completedPage.number + 1 %> de <%= completedPage.totalPages %></span></li>
+                        </ul>
+                    </nav>
+                </div>
+    
                 <div id="recompensas-content" class="tab-content">
                     <div class="rewards-grid">
                         <% todasAsConquistas.forEach(conquista => { %>
-                            <% 
-                            const desbloqueada = usuario.conquistas && 
-                                Array.isArray(usuario.conquistas) && 
-                                usuario.conquistas.some(c => c.id === conquista.id);
-                        %>
-    
+                        <% const desbloqueada = usuario.conquistas && usuario.conquistas.some(c => c.id === conquista.id); %>
                         <div class="reward-card <%= desbloqueada ? 'unlocked' : '' %>">
                             <span class="icon"><i class="<%= conquista.icone %>"></i></span>
                             <h4><%= conquista.nome %></h4>
@@ -185,6 +201,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // ... (todo o seu script JS continua aqui, sem alterações necessárias) ...
             const toggleButton = document.getElementById('sidebar-toggle-button');
             const sidebar = document.getElementById('sidebar');
             const dashboardContainer = document.getElementById('dashboard-container');
@@ -208,10 +225,14 @@
             const progressStartLabel = document.getElementById('progress-start-label');
             const progressEndLabel = document.getElementById('progress-end-label');
             const loggedInUserId = "<%= usuario.id %>";
-            let taskToCompleteId = null; // Mudei para armazenar apenas o ID
+            let taskToComplete = null;
+            let currentUserXP = "<%= usuario.xpTotal %>";
+            // A linha abaixo pode ser removida se não for mais usada em outro lugar,
+            // pois a lógica de recompensas agora é feita no EJS.
+            let conquistasAtuais = new Set("<%- JSON.stringify(usuario.conquistas.map(c => c.id)) %>");
+
 
             function updateProgressBar() {
-                const currentUserXP = parseInt("<%= usuario.xpTotal %>", 10);
                 const levelSize = 500;
                 const currentLevel = Math.floor(currentUserXP / levelSize);
                 
@@ -227,43 +248,29 @@
 
             updateProgressBar();
 
-            tasksContainer.addEventListener('click', (event) => {
-                const completeIcon = event.target.closest('.complete-task-icon');
-                if (completeIcon) {
-                    const taskCard = event.target.closest('.task-card');
-                    taskToCompleteId = taskCard.dataset.id; // Armazena o ID da tarefa
-                    confirmTaskModal.classList.add('is-active');
+            document.getElementById('tasks-container').addEventListener('click', (event) => {
+                if (event.target.classList.contains('complete-task-icon')) {
+                    taskToComplete = event.target.closest('.task-card');
+                    document.getElementById('confirm-task-modal').classList.add('is-active');
                 }
             });
 
             confirmCompletionButton.addEventListener('click', async () => {
-                if (!taskToCompleteId) return;
-
-                confirmCompletionButton.classList.add('is-loading'); // Mostra o loading no botão
-
-                try {
-                    const response = await fetch(`/api/tarefas/${taskToCompleteId}/completar`, {
-                        method: 'POST'
-                    });
-        
-                    if (!response.ok) {
-                        const error = await response.json();
-                        // Usa a mensagem de erro da API ou uma mensagem padrão
-                        throw new Error(error.message || 'Não foi possível completar a tarefa.');
-                    }
-        
-                    // **CORREÇÃO PRINCIPAL:** Recarrega a página em caso de sucesso.
-                    // Isso garante que todos os dados (XP, tarefas, conquistas) sejam atualizados.
-                    window.location.reload();
-        
-                } catch (error) {
-                    alert('Erro: ' + error.message);
-                } finally {
-                    // Limpa o estado e fecha o modal independentemente do resultado
-                    confirmTaskModal.classList.remove('is-active');
-                    confirmCompletionButton.classList.remove('is-loading');
-                    taskToCompleteId = null;
+                if (taskToComplete) {
+                    const taskId = taskToComplete.querySelector('.complete-task-icon').dataset.id;
+                    try {
+                        const response = await fetch(`/api/tarefas/${taskId}/completar`, { method: 'POST' });
+                        if (response.ok) {
+                            // Recarregar a página é a forma mais simples de atualizar todos os dados
+                            // (XP, lista de pendentes, lista de concluídas, recompensas)
+                            window.location.reload();
+                        } else {
+                            alert('Erro ao completar tarefa!');
+                        }
+                    } catch (error) { console.error('Erro:', error); }
                 }
+                document.getElementById('confirm-task-modal').classList.remove('is-active');
+                taskToComplete = null;
             });
 
             toggleButton.addEventListener('click', () => {
@@ -309,8 +316,12 @@
                 if (event.target === addTaskModal) closeAddTaskModal();
             });
 
+            const openConfirmModal = (taskElement) => {
+                taskToComplete = taskElement;
+                confirmTaskModal.classList.add('is-active');
+            };
             const closeConfirmModal = () => {
-                taskToCompleteId = null;
+                taskToComplete = null;
                 confirmTaskModal.classList.remove('is-active');
             };
             cancelCompletionButton.addEventListener('click', closeConfirmModal);
@@ -333,21 +344,26 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                         alert('Erro ao criar tarefa!');
-                    }
-                } catch (error) { 
-                    console.error('Erro:', error); 
-                    alert('Erro ao conectar com o servidor.');
-                }
+                    if (response.ok) window.location.reload();
+                    else alert('Erro ao criar tarefa!');
+                } catch (error) { console.error('Erro:', error); }
             });
 
+            tasksContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('complete-task-icon')) {
+                    const taskCard = event.target.closest('.task-card');
+                    openConfirmModal(taskCard);
+                }
+            });
+            
+            // Lógica para alternar entre as abas
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
+                    // Remove 'is-active' de todas as abas e conteúdos
                     tabs.forEach(item => item.classList.remove('is-active'));
                     tabContents.forEach(content => content.classList.remove('is-active'));
+
+                    // Adiciona 'is-active' à aba clicada e ao seu conteúdo correspondente
                     tab.classList.add('is-active');
                     document.getElementById(tab.dataset.tab + '-content').classList.add('is-active');
                 });

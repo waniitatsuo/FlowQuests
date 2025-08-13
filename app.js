@@ -37,31 +37,51 @@ app.get('/esqueci-senha', (req, res) => {
 });
 
 
+// Em app.js
+
 app.get('/dashboard', async (req, res) => {
-    const userId = req.query.userId;
+    const { userId } = req.query;
     if (!userId) {
         return res.redirect('/?message=login_required');
     }
 
+    // Pega os parâmetros da URL, com valores padrão se não existirem
+    const search = req.query.search || '';
+    const pendingPage = req.query.pending_page || 0;
+    const completedPage = req.query.completed_page || 0;
+    const tarefasApiUrl = 'http://localhost:8080/api/tarefas'; // URL da API de tarefas
+
     try {
-        // Busca todos os dados necessários em paralelo
-        const [usuarioResponse, tarefasResponse, conquistasResponse] = await Promise.all([
+        const [usuarioResponse, pendingTasksResponse, completedTasksResponse, conquistasResponse] = await Promise.all([
             axios.get(`${apiUrl}/usuarios/${userId}`),
-            axios.get(`${apiUrl}/tarefas/usuario/${userId}`),
-            axios.get(`${apiUrl}/conquistas`) // <-- ADICIONADA A BUSCA PELAS CONQUISTAS
+            // Busca a página de tarefas pendentes
+            axios.get(`${tarefasApiUrl}/usuario/${userId}?estado=pendente&search=${search}&page=${pendingPage}&size=5`),
+            // Busca a página de tarefas concluídas
+            axios.get(`${tarefasApiUrl}/usuario/${userId}?estado=concluida&search=${search}&page=${completedPage}&size=5`),
+            axios.get(`${apiUrl}/conquistas`)
         ]);
 
         res.render('dashboard', {
             usuario: usuarioResponse.data,
-            tarefas: tarefasResponse.data.filter(t => t.estado === 'pendente'),
-            todasAsConquistas: conquistasResponse.data // <-- PASSANDO A VARIÁVEL PARA A VIEW
+            // Agora passamos o objeto de página inteiro para o EJS
+            tarefasPendentes: pendingTasksResponse.data,
+            tarefasConcluidas: completedTasksResponse.data,
+            todasAsConquistas: conquistasResponse.data,
+            // Passamos os parâmetros de volta para a view, para manter o estado
+            search: search,
+            pendingPage: pendingTasksResponse.data,
+            completedPage: completedTasksResponse.data
         });
     } catch (error) {
         console.error('Erro ao buscar dados para o dashboard:', error.message);
         res.render('dashboard', {
-            usuario: { nome: 'Erro ao carregar', xpTotal: 0, id: 0, conquistas: [] },
-            tarefas: [],
-            todasAsConquistas: [] // Passa um array vazio em caso de erro
+            usuario: { nome: 'Erro', xpTotal: 0, id: 0, conquistas: [] },
+            tarefasPendentes: { content: [], number: 0, totalPages: 0 },
+            tarefasConcluidas: { content: [], number: 0, totalPages: 0 },
+            todasAsConquistas: [],
+            search: '',
+            pendingPage: { content: [], number: 0, totalPages: 0 },
+            completedPage: { content: [], number: 0, totalPages: 0 }
         });
     }
 });
