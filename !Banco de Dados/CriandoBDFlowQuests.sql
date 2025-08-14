@@ -57,3 +57,12 @@ CREATE TABLE IF NOT EXISTS `usuario_conquistas` (
   FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`usuario_id`) ON DELETE CASCADE,
   FOREIGN KEY (`conquista_id`) REFERENCES `conquistas`(`conquista_id`) ON DELETE CASCADE
 );
+
+
+-- -----------------------------------------------------
+-- Inserir conquistas
+-- -----------------------------------------------------
+INSERT INTO sua_tabela (comgusta_id, nome, descricao, icone) VALUES
+(1, 'Primeiros Passos', 'Você completou sua primeira tarefa!', 'fas fa-shoe-prints'),
+(2, 'Mestre das Tarefas', 'Complete 10 tarefas.', 'fas fa-star'),
+(3, 'Semana Produtiva', 'Complete tarefas por 7 dias seguidos.', 'fas fa-calendar-check');
