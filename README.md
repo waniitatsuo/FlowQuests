@@ -84,3 +84,5 @@ Você será direcionado para a tela de login, de onde poderá criar uma nova con
 -----
 
 *Projeto desenvolvido Por © 2025 Jorge Lucas, como parte de estudos em desenvolvimento web full-stack. Sinta-se à vontade para contribuir\!*
+
+**[link da apresentação em slides](https://www.canva.com/design/DAGwDd8GwwY/7HSiNtfQI70FiVd71kjhNw/view?utm_content=DAGwDd8GwwY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h640152bea3)**
