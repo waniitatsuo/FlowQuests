@@ -4,7 +4,7 @@ Bem-vindo ao FlowQuests\! Este é um sistema de gerenciamento de tarefas gamific
 
 O projeto utiliza uma arquitetura moderna com um back-end robusto em **Spring Boot** para gerenciar a lógica de negócio e uma interface de usuário dinâmica construída com **Node.js** e **EJS**.
 
-https://imgur.com/a/nYSApx2
+![Dashboard do FlowQuests](https://imgur.com/a/nYSApx2)
 
 ## Funcionalidades Principais ✨
 
