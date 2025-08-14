@@ -83,4 +83,4 @@ Você será direcionado para a tela de login, de onde poderá criar uma nova con
 
 -----
 
-*Projeto desenvolvido como parte de estudos em desenvolvimento web full-stack. Sinta-se à vontade para contribuir\!*
+*Projeto desenvolvido Por © 2025 Jorge Lucas, como parte de estudos em desenvolvimento web full-stack. Sinta-se à vontade para contribuir\!*
