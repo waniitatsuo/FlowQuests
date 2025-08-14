@@ -1,544 +1,610 @@
 /* Estilos Globais */
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-            font-family: 'Inter', sans-serif; /* Uma fonte mais moderna */
-            background-color: #f4f7fa;
-        }
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7fa;
+}
 
-        /* Layout Principal com Flexbox */
-        .dashboard-container {
-            display: flex;
-            height: 100%;
-            position: relative;
-        }
+/* Layout Principal */
+.dashboard-container {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
 
-        /* --- ANIMAÇÃO DA SIDEBAR --- */
-        .sidebar {
-            background-color: #2d3748; /* Tom de cinza escuro */
-            color: white;
-            width: 250px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex-shrink: 0; /* Impede que a sidebar encolha */
-            transition: margin-left 0.4s ease-in-out; /* Animação de deslize */
-            z-index: 20;
-        }
-        .dashboard-container.sidebar-collapsed .sidebar {
-            margin-left: -250px; /* Esconde a sidebar para a esquerda */
-        }
+/* Sidebar */
+.sidebar {
+    background-color: #2d3748;
+    color: white;
+    width: 250px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+    transition: margin-left 0.4s ease-in-out;
+    z-index: 20;
+}
 
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            position: relative;
-        }
-        .profile img {
-            border-radius: 50%;
-            border: 2px solid #4a5568;
-        }
-        .profile .name {
-            font-weight: 600;
-        }
-        .logout-link img {
-            width: 100%;
-            height: auto;
-            transition: opacity 0.3s ease;
-        }
-        .logout-link:hover img {
-            opacity: 0.85;
-        }
+.dashboard-container.sidebar-collapsed .sidebar {
+    margin-left: -250px;
+}
 
-        /* --- MENU DO PERFIL --- */
-        .profile-menu {
-            display: none; /* Começa escondido */
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            background-color: white;
-            color: #2d3748;
-            border-radius: 15px;
-            width: 300px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            z-index: 30;
-            padding: 1rem;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .profile-menu.is-active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .profile-menu-header {
-            display: flex;
-            align-items: center;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .profile-menu-header img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 1rem;
-        }
-        .profile-menu-info .username {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        .profile-menu-info .level {
-            font-size: 0.9rem;
-            color: #718096;
-        }
-        .profile-menu-body {
-            padding: 1rem 0;
-        }
-        .profile-menu-body .menu-label {
-            color: #a0aec0;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-        .profile-menu-body .menu-list a {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: 8px;
-            color: #4a5568;
-            font-weight: 500;
-        }
-        .profile-menu-body .menu-list a:hover {
-            background-color: #f4f7fa;
-        }
-        .profile-menu-body .menu-list a .icon {
-            margin-right: 1rem;
-            color: #718096;
-        }
+/* Perfil */
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    position: relative;
+}
 
+.profile img {
+    border-radius: 50%;
+    border: 2px solid #4a5568;
+}
 
-        /* Área de Conteúdo Principal */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            transition: width 0.4s ease-in-out;
-        }
+.profile .name {
+    font-weight: 600;
+}
 
-        /* Cabeçalho Azul */
-        .dashboard-header {
-            background: linear-gradient(to right, #3a7bd5, #3a60d5);
-            color: white;
-            padding: 2rem 2.5rem;
-            position: relative;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .header-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-        .header-points {
-            font-size: 1.25rem;
-            margin-top: 0.5rem;
-            opacity: 0.9;
-        }
-        .notification-icon-wrapper {
-            position: relative;
-            cursor: pointer;
-        }
-        .notification-icon-wrapper .badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 0.7rem;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ff3860;
-            color: white;
-            border: none;
-            transition: opacity 0.3s ease;
-        }
-        .xp-card {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            position: relative;
-        }
-        .xp-card .xp-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        .xp-card .xp-total {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .fa-medal {
-            color: #fbbF24;
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 1.5rem;
-        }
-        .progress-bar-container {
-            margin-top: 1.5rem;
-        }
-        .progress-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 0.5rem;
-        }
+.logout-link img {
+    width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease;
+}
 
-        /* --- MENU DE NOTIFICAÇÕES --- */
-        .notification-menu {
-            display: none;
-            position: absolute;
-            top: calc(100% + 15px);
-            right: 0;
-            width: 350px;
-            background-color: white;
-            color: #2d3748;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            z-index: 30;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .notification-menu.is-active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .notification-menu-header {
-            padding: 1rem 1.5rem;
-            font-weight: bold;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .notification-item {
-            display: flex;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-        .notification-item .icon {
-            margin-right: 1rem;
-            color: #3a7bd5;
-        }
-        .notification-item p {
-            font-size: 0.9rem;
-        }
-        .notification-item p strong {
-            color: #2d3748;
-        }
-        .notification-item p span {
-            display: block;
-            font-size: 0.8rem;
-            color: #a0aec0;
-            margin-top: 0.25rem;
-        }
+.logout-link:hover img {
+    opacity: 0.85;
+}
 
+/* Menu do Perfil */
+.profile-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    background-color: white;
+    color: #2d3748;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    z-index: 30;
+    padding: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-        /* Área de Tarefas */
-        .tasks-area {
-            background-color: #f4f7fa;
-            flex-grow: 1;
-            border-top-left-radius: 30px;
-            margin-top: -30px;
-            padding: 2rem 2.5rem;
-            position: relative;
-            overflow-y: auto; /* Adiciona scroll se as tarefas ultrapassarem a altura */
-        }
-        
-        /* --- ESTILOS DAS ABAS --- */
-        .tab-content {
-            display: none;
-        }
-        .tab-content.is-active {
-            display: block;
-        }
+.profile-menu.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
 
-        /* --- POSICIONAMENTO CORRIGIDO DO BOTÃO --- */
-        .sidebar-toggle {
-            position: absolute;
-            left: -20px; /* Metade da sua largura para fora do header */
-            bottom: -20px; /* Metade da sua altura para baixo, na costura */
-            background-color: #2d3748; 
-            color: white; 
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            z-index: 10;
-            cursor: pointer;
-            transition: transform 0.4s ease-in-out, background-color 0.4s ease, color 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .dashboard-container.sidebar-collapsed .sidebar-toggle {
-            transform: rotate(180deg);
-        }
+.profile-menu-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-        .tasks-options {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #718096;
-            font-size: 1.5rem;
-        }
+.profile-menu-header img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
 
-        .fab-button {
-            position: absolute;
-            bottom: 2rem;
-            right: 2.5rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #3a7bd5;
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 300;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 4px;
-            z-index: 1001;
-        }
+.profile-menu-info .username {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
 
-        /* --- ESTILOS DO MODAL COM ANIMAÇÃO --- */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+.profile-menu-info .level {
+    font-size: 0.9rem;
+    color: #718096;
+}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.profile-menu-body {
+    padding: 1rem 0;
+}
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.is-active {
-            display: flex;
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-        .modal-content {
-            background-color: white;
-            border-radius: 15px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 500px;
-            position: relative;
-            opacity: 0; /* Começa invisível para a animação funcionar */
-        }
-        .modal-overlay.is-active .modal-content {
-            /* Aplica a animação quando o modal está ativo */
-            animation: fadeInUp 0.4s ease-out 0.1s forwards; /* 0.1s de delay para aparecer depois do fundo */
-        }
-        .modal-close-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
+.profile-menu-body .menu-label {
+    color: #a0aec0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
 
-        /* --- ESTILOS DOS CARDS DE TAREFA --- */
-        .task-card {
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .task-card.remedios { background-color: #fefcbf; } /* Amarelo */
-        .task-card.atividades { background-color: #c6f6d5; } /* Verde */
-        .task-card.trabalhos { background-color: #bee3f8; } /* Azul */
-        .task-card.eventos { background-color: #fed7d7; } /* Vermelho */
+.profile-menu-body .menu-list a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 8px;
+    color: #4a5568;
+    font-weight: 500;
+}
 
-        .task-card h3 {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-        .task-card p {
-            font-size: 0.9rem;
-            color: #4a5568;
-            margin-bottom: 0.25rem;
-        }
-        .task-card .task-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-        }
-        .task-footer .complete-task-icon {
-            width: 28px;
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .task-footer .complete-task-icon:hover {
-            transform: scale(1.15);
-        }
+.profile-menu-body .menu-list a:hover {
+    background-color: #f4f7fa;
+}
 
-        /* --- ESTILOS DA ABA DE RECOMPENSAS --- */
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        .reward-card {
-            background-color: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .reward-card .icon {
-            font-size: 3rem;
-            color: #fbbF24; /* Dourado */
-        }
-        .reward-card h4 {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-top: 1rem;
-            color: #2d3748;
-        }
-        .reward-card p {
-            font-size: 0.9rem;
-            color: #718096;
-            margin-top: 0.5rem;
-        }
+.profile-menu-body .menu-list a .icon {
+    margin-right: 1rem;
+    color: #718096;
+}
 
+/* Conteúdo Principal */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: width 0.4s ease-in-out;
+}
 
-        /* --- ESTILOS RESPONSIVOS PARA MOBILE --- */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
+/* Header */
+.dashboard-header {
+    background: linear-gradient(to right, #3a7bd5, #3a60d5);
+    color: white;
+    padding: 2rem 2.5rem;
+    position: relative;
+}
 
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100%;
-                transform: translateX(-100%);
-                transition: transform 0.4s ease-in-out;
-            }
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
 
-            .sidebar.is-active {
-                transform: translateX(0);
-            }
+.header-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
 
-            .sidebar-toggle {
-                position: fixed;
-                left: 20px;
-                top: 20px;
-                bottom: auto; /* Reseta a posição de baixo */
-            }
+.header-points {
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+}
 
-            .main-content {
-                width: 100%;
-            }
+.notification-icon-wrapper {
+    position: relative;
+    cursor: pointer;
+}
 
-            .dashboard-header {
-                padding: 1.5rem;
-            }
+.notification-icon-wrapper .badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.7rem;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff3860;
+    color: white;
+    border: none;
+    transition: opacity 0.3s ease;
+}
 
-            .header-top {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1.5rem;
-            }
+.xp-card {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+}
 
-            .header-title {
-                font-size: 2rem;
-            }
+.xp-card .xp-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
 
-            .tasks-area {
-                padding: 1.5rem;
-            }
+.xp-card .xp-total {
+    font-size: 2rem;
+    font-weight: bold;
+}
 
-            .fab-button {
-                right: 1.5rem;
-                bottom: 1.5rem;
-            }
+.fa-medal {
+    color: #fbbF24;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.5rem;
+}
 
-            .notification-menu, .profile-menu {
-                width: 90vw;
-                max-width: 320px;
-            }
-        }
+.progress-bar-container {
+    margin-top: 1.5rem;
+}
 
-         /* Estilo para conquistas BLOQUEADAS */
-        .reward-card {
-            background-color: #e9ecef;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-        .reward-card .icon {
-            color: #adb5bd;
-        }
-        .reward-card h4 {
-            color: #495057;
-        }
-        .reward-card p {
-            color: #6c757d;
-        }
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
 
-        /* Estilo para conquistas DESBLOQUEADAS */
-        .reward-card.unlocked {
-            background-color: white;
-            opacity: 1;
-            border: 2px solid #48c78e;
-        }
-        .reward-card.unlocked .icon {
-            color: #fbbF24;
-        }
-        .reward-card.unlocked h4 {
-            color: #2d3748;
-        }
-        .reward-card.unlocked p {
-            color: #718096;
-        }
-        
+/* Menu de Notificações */
+.notification-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 350px;
+    background-color: white;
+    color: #2d3748;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    z-index: 30;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification-menu.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification-menu-header {
+    padding: 1rem 1.5rem;
+    font-weight: bold;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.notification-item {
+    display: flex;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item .icon {
+    margin-right: 1rem;
+    color: #3a7bd5;
+}
+
+.notification-item p {
+    font-size: 0.9rem;
+}
+
+.notification-item p strong {
+    color: #2d3748;
+}
+
+.notification-item p span {
+    display: block;
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin-top: 0.25rem;
+}
+
+/* Área de Tarefas */
+.tasks-area {
+    background-color: #f4f7fa;
+    flex-grow: 1;
+    border-top-left-radius: 30px;
+    margin-top: -30px;
+    padding: 2rem 2.5rem;
+    position: relative;
+    overflow-y: auto;
+}
+
+/* Tabs */
+.tab-content {
+    display: none;
+}
+
+.tab-content.is-active {
+    display: block;
+}
+
+/* Botão Sidebar */
+.sidebar-toggle {
+    position: absolute;
+    left: -20px;
+    bottom: -20px;
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.4s ease-in-out, background-color 0.4s ease, color 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-container.sidebar-collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+.tasks-options {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    font-size: 1.5rem;
+}
+
+/* Botão FAB */
+.fab-button {
+    position: absolute;
+    bottom: 2rem;
+    right: 2.5rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #3a7bd5;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 300;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4px;
+    z-index: 1001;
+}
+
+/* Modal */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.is-active {
+    display: flex;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    opacity: 0;
+}
+
+.modal-overlay.is-active .modal-content {
+    animation: fadeInUp 0.4s ease-out 0.1s forwards;
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Cards de Tarefa */
+.task-card {
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.task-card.remedios { background-color: #fefcbf; }
+.task-card.atividades { background-color: #c6f6d5; }
+.task-card.trabalhos { background-color: #bee3f8; }
+.task-card.eventos { background-color: #fed7d7; }
+
+.complete-task-icon {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.5rem;
+    width: 28px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.complete-task-icon:hover {
+    transform: scale(1.15);
+}
+
+.task-card h3 {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.task-card p {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 0.25rem;
+}
+
+.task-card .task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.task-footer .complete-task-icon {
+    width: 28px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.task-footer .complete-task-icon:hover {
+    transform: scale(1.15);
+}
+
+/* Recompensas */
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.reward-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.reward-card .icon {
+    font-size: 3rem;
+    color: #fbbF24;
+}
+
+.reward-card h4 {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    color: #2d3748;
+}
+
+.reward-card p {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+/* Conquistas */
+.reward-card {
+    background-color: #e9ecef;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.reward-card .icon {
+    color: #adb5bd;
+}
+
+.reward-card h4 {
+    color: #495057;
+}
+
+.reward-card p {
+    color: #6c757d;
+}
+
+.reward-card.unlocked {
+    background-color: white;
+    opacity: 1;
+    border: 2px solid #48c78e;
+}
+
+.reward-card.unlocked .icon {
+    color: #fbbF24;
+}
+
+.reward-card.unlocked h4 {
+    color: #2d3748;
+}
+
+.reward-card.unlocked p {
+    color: #718096;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        transition: transform 0.4s ease-in-out;
+    }
+
+    .sidebar.is-active {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        bottom: auto;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .dashboard-header {
+        padding: 1.5rem;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+
+    .header-title {
+        font-size: 2rem;
+    }
+
+    .tasks-area {
+        padding: 1.5rem;
+    }
+
+    .fab-button {
+        right: 1.5rem;
+        bottom: 1.5rem;
+    }
+
+    .notification-menu, .profile-menu {
+        width: 90vw;
+        max-width: 320px;
+    }
+}

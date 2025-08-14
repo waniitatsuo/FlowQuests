@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styleDashboard.css">
+
+    <link rel="icon" type="image/png" href="/images/FlowQuests-IconWeb.png">
+
 </head>
 <body>
     <div id="dashboard-container" class="dashboard-container">
@@ -104,15 +107,28 @@
                 <div id="tarefas-content" class="tab-content is-active">
                     <div id="tasks-container">
                         <% tarefasPendentes.content.forEach(tarefa => { %>
-                        <div class="task-card <%= tarefa.categoria %>">
-                            <h3><%= tarefa.titulo.toUpperCase() %></h3>
-                            <p><strong>Data:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
-                            <p><strong>Horário:</strong> <%= tarefa.horaPrazo %></p>
-                            <div class="task-footer">
+                            <!-- Cria uma data de prazo completa com a data e hora da tarefa -->
+                            <% const prazo = new Date(tarefa.dataPrazo + 'T' + tarefa.horaPrazo); %>
+
+                            <!-- Pega a data e hora atuais -->
+                            <% const agora = new Date(); %>
+
+                            <!-- Define o status inicial como 'pendente' -->
+                            <% let status = { texto: 'Pendente', classe: 'is-warning' }; %>
+        
+                            <!-- Se o prazo já passou (é menor que agora), muda o status para 'atrasada' -->
+                            <% if (prazo < agora) { %>
+                                <%    status = { texto: 'Atrasada', classe: 'is-danger' }; %>
+                            <% } %>
+                        
+                            <div class="task-card <%= tarefa.categoria %>">
+                                <h3><%= tarefa.titulo.toUpperCase() %></h3>
+                                <p><strong>Data:</strong> <%= new Date(tarefa.dataPrazo + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) %></p>
+                                <p><strong>Horário:</strong> <%= tarefa.horaPrazo.substring(0, 5) %></p>
+                                <p><strong>Status:</strong> <%= status.texto %></p>
                                 <p><strong>Recompensa:</strong> <%= tarefa.recompensaXp %>XP</p>
                                 <img src="/images/thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon" data-id="<%= tarefa.id %>">
                             </div>
-                        </div>
                         <% }) %>
                     </div>
                     <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
@@ -201,7 +217,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ... (todo o seu script JS continua aqui, sem alterações necessárias) ...
+
             const toggleButton = document.getElementById('sidebar-toggle-button');
             const sidebar = document.getElementById('sidebar');
             const dashboardContainer = document.getElementById('dashboard-container');
@@ -227,9 +243,16 @@
             const loggedInUserId = "<%= usuario.id %>";
             let taskToComplete = null;
             let currentUserXP = "<%= usuario.xpTotal %>";
-            // A linha abaixo pode ser removida se não for mais usada em outro lugar,
-            // pois a lógica de recompensas agora é feita no EJS.
             let conquistasAtuais = new Set("<%- JSON.stringify(usuario.conquistas.map(c => c.id)) %>");
+            const taskDateInput = document.getElementById('task-date');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = ('0' + (today.getMonth() + 1)).slice(-2); // Adiciona um zero à esquerda se for menor que 10
+            const day = ('0' + today.getDate()).slice(-2); // Adiciona um zero à esquerda se for menor que 10
+            const todayString = `${year}-${month}-${day}`;
+
+            // Define o atributo 'min' do campo de data, desabilitando dias anteriores
+            taskDateInput.min = todayString;
 
 
             function updateProgressBar() {
@@ -261,8 +284,6 @@
                     try {
                         const response = await fetch(`/api/tarefas/${taskId}/completar`, { method: 'POST' });
                         if (response.ok) {
-                            // Recarregar a página é a forma mais simples de atualizar todos os dados
-                            // (XP, lista de pendentes, lista de concluídas, recompensas)
                             window.location.reload();
                         } else {
                             alert('Erro ao completar tarefa!');
@@ -329,8 +350,23 @@
                 if (event.target === confirmTaskModal) closeConfirmModal();
             });
 
+            // Verifica o horario escolhido 
             taskForm.addEventListener('submit', async (event) => {
+
                 event.preventDefault();
+
+                const taskDateValue = document.getElementById('task-date').value;
+                const taskTimeValue = document.getElementById('task-time').value;
+
+                const selectedDateTime = new Date(`${taskDateValue}T${taskTimeValue}`);
+                const now = new Date();
+
+                if (selectedDateTime < now) {
+                    alert('A data e hora da tarefa não podem estar no passado. Por favor, escolha um horário futuro.');
+                    return; 
+                }   
+
+                //Criação da tarefa
                 const taskData = {
                     titulo: document.getElementById('task-name').value,
                     dataPrazo: document.getElementById('task-date').value,
@@ -359,11 +395,9 @@
             // Lógica para alternar entre as abas
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Remove 'is-active' de todas as abas e conteúdos
                     tabs.forEach(item => item.classList.remove('is-active'));
                     tabContents.forEach(content => content.classList.remove('is-active'));
 
-                    // Adiciona 'is-active' à aba clicada e ao seu conteúdo correspondente
                     tab.classList.add('is-active');
                     document.getElementById(tab.dataset.tab + '-content').classList.add('is-active');
                 });

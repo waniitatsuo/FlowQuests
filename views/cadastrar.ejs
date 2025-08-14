@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlowQuests - Criar Conta</title>
-    <!-- Frameworks CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styleTelaInicial.css">
+
+    <link rel="icon" type="image/png" href="/images/FlowQuests-IconWeb.png">
+
     <style>
         .buttons {
             margin-top: 1.5rem;
@@ -16,16 +18,13 @@
 </head>
 <body>
 
-    <!-- Logo -->
     <div class="has-text-centered" style="margin-bottom: 1.5rem;">
         <img src="/images/FlowQuests-Icon.png" alt="Logo da FlowQuests" style="max-width: 280px;">
     </div>
 
-    <!-- Card de Registro -->
     <div class="login-card">
         <h1 class="title is-4 has-text-centered">Criar Conta</h1>
         
-        <!-- O formulário agora envia os dados para o servidor Node.js -->
         <form action="/cadastrar" method="POST">
             <div class="field">
                 <label class="label">Nome</label>

@@ -1,3 +1,4 @@
+/* Body Styles */
 body {
     background-color: #67c7ff;
     min-height: 100vh;
@@ -8,11 +9,31 @@ body {
     padding: 1rem;
 }
 
+/* Login Card */
 .login-card {
     width: 100%;
     max-width: 400px;
     padding: 2rem;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02);
-    border-radius: 8px;
     background: white;
+    border-radius: 8px;
+    box-shadow: 
+        0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
+        0 0 0 1px rgba(10, 10, 10, 0.02);
+}
+
+/* Notification System */
+.feedback-notification-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    transform: translateY(-150%);
+    transition: transform 0.5s ease-in-out;
+}
+
+.feedback-notification-container.is-visible {
+    transform: translateY(20px);
 }
