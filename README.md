@@ -4,6 +4,8 @@ Bem-vindo ao FlowQuests\! Este é um sistema de gerenciamento de tarefas gamific
 
 O projeto utiliza uma arquitetura moderna com um back-end robusto em **Spring Boot** para gerenciar a lógica de negócio e uma interface de usuário dinâmica construída com **Node.js** e **EJS**.
 
+https://imgur.com/a/nYSApx2
+
 ## Funcionalidades Principais ✨
 
   * **Autenticação de Usuários:** Sistema seguro de login e cadastro.
@@ -36,19 +38,11 @@ Siga os passos abaixo na ordem correta:
 
 ### 1\. Configuração do Banco de Dados
 
-Primeiro, precisamos criar o banco de dados e popular as tabelas iniciais.
+Primeiro, precisamos criar o banco de dados e suas tabelas. O processo é simples:
 
-1.  Abra o seu cliente MySQL (como o MySQL Workbench, DBeaver, ou via linha de comando).
-2.  Crie um novo banco de dados (schema) chamado `flowquests_db`.
-    ```sql
-    CREATE DATABASE flowquests_db;
-    ```
-3.  Use o banco de dados recém-criado.
-    ```sql
-    USE flowquests_db;
-    ```
-4.  Dentro da pasta **"Banco de Dados"** que você baixou do repositório, localize o arquivo de script SQL (ex: `script.sql`).
-5.  Execute o conteúdo completo desse script no seu cliente MySQL. Ele criará todas as tabelas e inserirá os dados iniciais, como as conquistas.
+1.  Abra o seu cliente MySQL de preferência (MySQL Workbench, DBeaver, etc.).
+2.  Localize a pasta **"Banco de Dados"** no repositório do projeto. Dentro dela, você encontrará o arquivo `CriandoBDFlowQuests.sql`.
+3.  **Execute o conteúdo completo** desse script. Ele irá criar o banco de dados `flowquests_db`, todas as tabelas necessárias e inserir os dados iniciais (como as conquistas).
 
 ### 2\. Configuração do Back-end (API Spring Boot)
 
