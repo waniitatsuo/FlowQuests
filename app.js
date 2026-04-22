@@ -1,168 +1,113 @@
-// 1. Importa os pacotes necessários
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
-const bodyParser = require('body-parser');
+const session = require('express-session');
 
-// 2. Inicializa a aplicação Express
 const app = express();
 const port = 3000;
+const apiUrl = 'http://localhost:8080/api';
 
-// 3. Configura o middleware
-// Lê dados de formulários enviados no formato x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-// Lê dados enviados no formato JSON
-app.use(bodyParser.json());
-
-// Define a pasta raiz do projeto para servir ficheiros estáticos (CSS, imagens)
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static(__dirname));
 
-// Configura o Express para encontrar e renderizar os ficheiros .ejs na pasta 'views'
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// 4. Define a URL da nossa API Spring Boot
-const apiUrl = 'http://localhost:8080/api';
+// Configuração de Sessão (Cookies)
+app.use(session({
+    secret: 'chave-super-secreta-do-wanii',
+    resave: false,
+    saveUninitialized: false
+}));
 
+// --- ROTAS DE NAVEGAÇÃO ---
 
-// --- ROTAS PARA SERVIR AS PÁGINAS (VIEWS) ---
-
-// Rota principal que exibe a página de login
 app.get('/', (req, res) => {
-    res.render('index', { message: req.query.message });
+    res.render('login', { message: req.query.message });
 });
 
-// Rota para exibir a página de cadastro
-app.get('/cadastrar', (req, res) => {
-    res.render('cadastrar');
-});
-
-// Rota para exibir a página de "esqueci a senha"
-app.get('/esqueci-senha', (req, res) => {
-    res.render('esqueci-senha');
-});
-
-// Rota principal do Dashboard
 app.get('/dashboard', async (req, res) => {
-    const { userId } = req.query;
-    if (!userId) {
-        // Se não tiver userId, redireciona para o login
-        return res.redirect('/?message=login_required');
-    }
-
-    // Pega os parâmetros da URL, com valores padrão se não existirem
-    const search = req.query.search || '';
-    const pendingPage = req.query.pending_page || 0;
-    const completedPage = req.query.completed_page || 0;
-    const tarefasApiUrl = 'http://localhost:8080/api/tarefas'; // URL da API de tarefas
+    const userId = req.session.userId;
+    if (!userId) return res.redirect('/?message=login_required');
 
     try {
-        // Faz várias requisições para a API Spring em paralelo para ser mais rápido
-        const [usuarioResponse, pendingTasksResponse, completedTasksResponse, conquistasResponse] = await Promise.all([
-            // Pega os dados do usuário
-            axios.get(`${apiUrl}/usuarios/${userId}`),
-
-            // Busca a página de tarefas pendentes
-            axios.get(`${tarefasApiUrl}/usuario/${userId}?estado=pendente&search=${search}&page=${pendingPage}&size=5`),
-
-            // Busca a página de tarefas concluídas
-            axios.get(`${tarefasApiUrl}/usuario/${userId}?estado=concluida&search=${search}&page=${completedPage}&size=5`),
-
-            // Pega todas as conquistas possíveis
-            axios.get(`${apiUrl}/conquistas`)
+        const config = { headers: { 'X-Usuario-Id': userId } };
+        // Busca perfil, tarefas e conquistas em paralelo
+        const [userRes, tasksRes, achievementsRes] = await Promise.all([
+            axios.get(`${apiUrl}/usuarios/geral/meu-perfil`, config),
+            axios.get(`${apiUrl}/tarefas/usuario/${userId}?estado=pendente`, config),
+            axios.get(`${apiUrl}/conquistas`, config)
         ]);
 
-        // Renderiza a página 'dashboard.ejs' com todos os dados recebidos da API
         res.render('dashboard', {
-            usuario: usuarioResponse.data,
-            tarefasPendentes: pendingTasksResponse.data,
-            tarefasConcluidas: completedTasksResponse.data,
-            todasAsConquistas: conquistasResponse.data,
-            search: search,
-            pendingPage: pendingTasksResponse.data,
-            completedPage: completedTasksResponse.data
+            usuario: userRes.data,
+            tarefas: tasksRes.data,
+            conquistas: achievementsRes.data
         });
     } catch (error) {
-        // Se der algum erro na comunicação com a API, exibe uma mensagem no console
-        console.error('Erro ao buscar dados para o dashboard:', error.message);
-        // E renderiza a página com dados de erro para não quebrar
-        res.render('dashboard', {
-            usuario: { nome: 'Erro', xpTotal: 0, id: 0, conquistas: [] },
-            tarefasPendentes: { content: [], number: 0, totalPages: 0 },
-            tarefasConcluidas: { content: [], number: 0, totalPages: 0 },
-            todasAsConquistas: [],
-            search: '',
-            pendingPage: { content: [], number: 0, totalPages: 0 },
-            completedPage: { content: [], number: 0, totalPages: 0 }
-        });
+        res.redirect('/?message=error');
     }
 });
 
+// --- ROTAS DE LOGIN/LOGOUT ---
 
-// --- ROTAS PARA PROCESSAR FORMULÁRIOS (AÇÕES) ---
-
-// Rota que recebe os dados do formulário de login
 app.post('/login', async (req, res) => {
-    // Pega o email e a senha do corpo da requisição
-    const { email, senha } = req.body;
     try {
-        // Envia os dados para a API Spring verificar o login, se o login for bem-sucedido, redireciona para o dashboard com o ID do usuário!
-        const response = await axios.post(`${apiUrl}/usuarios/login`, { email, senha });
-        const usuario = response.data;
-        res.redirect(`/dashboard?userId=${usuario.id}`);
+        const response = await axios.post(`${apiUrl}/usuarios/login`, req.body);
+        req.session.userId = response.data.id;
+        res.redirect('/dashboard');
     } catch (error) {
-        // Se o login falhar, redireciona de volta para a página inicial com uma mensagem de erro
-        console.error("Falha no login:", error.response ? error.response.status : error.message);
         res.redirect('/?message=login_failed');
     }
 });
 
-// Rota que recebe os dados do formulário de cadastro
-app.post('/cadastrar', async (req, res) => {
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+// --- PAINEL ADMIN (MODERAÇÃO) ---
+
+app.get('/admin/painel', async (req, res) => {
+    const adminId = req.session.userId;
+    if (!adminId) return res.redirect('/');
+
     try {
-        // Envia os dados do novo usuário para a API Spring criar a conta, se for bem-sucedido, redireciona para a página de login com uma mensagem de sucesso!
-        const { nome, email, senha } = req.body;
-        await axios.post(`${apiUrl}/usuarios`, { nome, email, senha });
-        res.redirect('/?message=success');
+        const configAdmin = { headers: { 'X-Admin-Id': adminId } };
+        const userRes = await axios.get(`${apiUrl}/usuarios/geral/meu-perfil`, { headers: { 'X-Usuario-Id': adminId } });
+        
+        if (userRes.data.perfil !== 'ADMIN') return res.status(403).send("Acesso Negado");
+
+        // Rota que lista todos os usuários para o admin
+        const listRes = await axios.get(`${apiUrl}/usuarios/admin/lista-users`, configAdmin);
+        
+        res.render('admin/admin-dashboard', { admin: userRes.data, usuarios: listRes.data });
     } catch (error) {
-        // Se der erro, exibe no console e envia uma resposta de erro
-        console.error('Erro ao cadastrar usuário:', error.message);
-        res.status(500).send('Erro ao cadastrar usuário.');
+        res.redirect('/dashboard');
     }
 });
 
-// Rota para redirecionar para a pagina principal!
-app.post('/esqueci-senha', (req, res) => {
-    res.redirect('/?message=recovery');
-});
-
-// --- ROTAS DA API (PONTE PARA O FRONT-END) ---
-
-app.post('/api/tarefas', async (req, res) => {
+// Ações do Admin (Promover, Editar, Deletar)
+app.post('/admin/promover/:id', async (req, res) => {
     try {
-        const response = await axios.post(`${apiUrl}/tarefas`, req.body);
-        res.status(201).json(response.data);
-    } catch (error) {
-        console.error('Erro no Node.js ao criar tarefa:', error.message);
-        res.status(500).json({ message: 'Erro ao criar tarefa' });
-    }
+        await axios.put(`${apiUrl}/usuarios/admin/adicionar-adm/${req.params.id}`, { perfil: 'ADMIN' }, { headers: { 'X-Admin-Id': req.session.userId } });
+        res.redirect('/admin/painel');
+    } catch (e) { res.status(500).send("Erro ao promover"); }
 });
 
-// --- NOVA ROTA PARA COMPLETAR TAREFA ---
-
-// Rota para completar tarefa (chamada pelo JavaScript do dashboard)
-app.post('/api/tarefas/:id/completar', async (req, res) => {
+app.post('/admin/editar/:id', async (req, res) => {
     try {
-        // Repassa a requisição para a API Spring
-        const response = await axios.post(`${apiUrl}/tarefas/${req.params.id}/completar`);
-        res.status(200).json(response.data);
-    } catch (error) {
-        const message = error.response?.data?.message || error.message;
-        res.status(error.response?.status || 500).json({ message });
-    }
+        await axios.put(`${apiUrl}/usuarios/admin/atualiza/${req.params.id}`, req.body, { headers: { 'X-Admin-Id': req.session.userId } });
+        res.redirect('/admin/painel');
+    } catch (e) { res.status(500).send("Erro ao editar"); }
 });
 
-// 6. Inicializa o servidor
-app.listen(port, () => {
-    console.log(`Servidor Node.js a rodar em http://localhost:${port}`);
+app.post('/admin/deletar/:id', async (req, res) => {
+    try {
+        await axios.delete(`${apiUrl}/usuarios/admin/deleta/${req.params.id}`, { headers: { 'X-Admin-Id': req.session.userId } });
+        res.redirect('/admin/painel');
+    } catch (e) { res.status(500).send("Erro ao deletar"); }
 });
+
+app.listen(port, () => console.log(`Rodando em http://localhost:${port}`));

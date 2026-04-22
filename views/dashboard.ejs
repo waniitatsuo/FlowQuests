@@ -33,6 +33,16 @@
                             <li><a><span class="icon"><i class="fas fa-cog"></i></span> Configurações</a></li>
                             <li><a><span class="icon"><i class="fas fa-user-friends"></i></span> Amigos</a></li>
                             <li><a><span class="icon"><i class="fas fa-store"></i></span> Loja</a></li>
+
+                            <% if (usuario.perfil === 'ADMIN') { %>
+                                <hr>
+                                <li>
+                                    <a href="/admin/painel" class="has-text-danger has-text-weight-bold">
+                                    <span class="icon"><i class="fas fa-shield-alt"></i></span> Painel Admin
+                                    </a>
+                                </li>
+                            <% } %>
+
                         </ul>
                     </div>
                 </div>
