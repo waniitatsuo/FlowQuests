@@ -37,7 +37,7 @@
                             <% if (usuario.perfil === 'ADMIN') { %>
                                 <hr>
                                 <li>
-                                    <a href="/admin/painel" class="has-text-danger has-text-weight-bold">
+                                    <a href="/admin/admin-dashboard" class="has-text-danger has-text-weight-bold">
                                     <span class="icon"><i class="fas fa-shield-alt"></i></span> Painel Admin
                                     </a>
                                 </li>
@@ -137,7 +137,7 @@
                                 <p><strong>Horário:</strong> <%= tarefa.horaPrazo.substring(0, 5) %></p>
                                 <p><strong>Status:</strong> <%= status.texto %></p>
                                 <p><strong>Recompensa:</strong> <%= tarefa.recompensaXp %>XP</p>
-                                <img src="/images/thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon" data-id="<%= tarefa.id %>">
+                                <img src="/images/Thumbs-up.png" alt="Completar Tarefa" class="complete-task-icon" data-id="<%= tarefa.id %>">
                             </div>
                         <% }) %>
                     </div>

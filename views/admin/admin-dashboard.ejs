@@ -6,58 +6,111 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="background-color: #f4f6f8;">
+<body style="background-color: #f4f6f8; min-height: 100vh;">
 
-    <section class="section">
+    <section class="section" style="padding-bottom: 1.5rem;">
         <div class="container">
             <div class="level">
                 <div class="level-left">
-                    <h1 class="title has-text-danger"><i class="fas fa-shield-alt"></i> Moderação</h1>
+                    <div>
+                        <h1 class="title has-text-danger">
+                            <span class="icon"><i class="fas fa-shield-alt"></i></span> 
+                            Painel de Moderação
+                        </h1>
+                        <p class="subtitle is-6">Bem-vindo, Chefe <strong><%= admin.nome %></strong>!</p>
+                    </div>
                 </div>
                 <div class="level-right">
-                    <a href="/dashboard" class="button is-dark">Voltar ao Jogo</a>
+                    <a href="/dashboard" class="button is-dark">
+                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                        <span>Voltar ao Jogo</span>
+                    </a>
                 </div>
             </div>
+        </div>
+    </section>
 
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
             <div class="box">
-                <table class="table is-fullwidth is-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>E-mail</th>
-                            <th>Perfil</th>
-                            <th class="has-text-centered">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% usuarios.forEach(user => { %>
+                <div class="level mb-4">
+                    <div class="level-left">
+                        <h2 class="title is-4 mb-0">Gestão de Usuários</h2>
+                    </div>
+                    <div class="level-right">
+                        <button class="button is-success is-outlined" disabled title="Em breve!">
+                            <span class="icon"><i class="fas fa-user-plus"></i></span>
+                            <span>Novo Admin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped is-hoverable is-vcentered">
+                        <thead>
                             <tr>
-                                <td>#<%= user.id %></td>
-                                <td><%= user.nome %></td>
-                                <td><%= user.email %></td>
-                                <td>
-                                    <span class="tag <%= user.perfil === 'ADMIN' ? 'is-danger' : 'is-info' %> is-light">
-                                        <%= user.perfil %>
-                                    </span>
-                                </td>
-                                <td class="has-text-centered">
-                                    <div class="buttons is-centered">
-                                        <% if (user.perfil !== 'ADMIN') { %>
-                                            <form action="/admin/promover/<%= user.id %>" method="POST">
-                                                <button class="button is-small is-success" title="Promover"><i class="fas fa-arrow-up"></i></button>
-                                            </form>
-                                        <% } %>
-                                        <button class="button is-small is-warning" onclick="abrirModalEditar('<%= user.id %>', '<%= user.nome %>', '<%= user.email %>')"><i class="fas fa-edit"></i></button>
-                                        <form action="/admin/deletar/<%= user.id %>" method="POST">
-                                            <button class="button is-small is-danger" onclick="return confirm('Deletar usuário?')"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Nível / XP</th>
+                                <th>Perfil</th>
+                                <th class="has-text-centered">Ações</th>
                             </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% usuarios.forEach(user => { %>
+                                <tr>
+                                    <td><strong>#<%= user.id %></strong></td>
+                                    <td><%= user.nome %></td>
+                                    <td><%= user.email %></td>
+                                    <td><%= user.xpTotal %> XP</td>
+                                    
+                                    <td>
+                                        <% if (user.perfil === 'ADMIN') { %>
+                                            <span class="tag is-danger is-light"><strong>ADMIN</strong></span>
+                                        <% } else { %>
+                                            <span class="tag is-info is-light">USER</span>
+                                        <% } %>
+                                    </td>
+                                    
+                                    <td class="has-text-centered">
+                                        <div class="buttons is-centered mb-0">
+        
+                                            <% if (user.perfil !== 'ADMIN') { %>
+                                                <form action="/admin/promover/<%= user.id %>" method="POST" style="display:inline;">
+                                                    <button type="submit" class="button is-small is-success" title="Promover a Admin"
+                                                            onclick="return confirm('Deseja dar poderes de Administrador para <%= user.nome %>?');">
+                                                        <span class="icon"><i class="fas fa-arrow-up"></i></span>
+                                                    </button>
+                                                </form>
+                                            <% } %>
+
+                                            <button class="button is-small is-warning" title="Editar Usuário" 
+                                                    onclick="abrirModalEditar('<%= user.id %>', '<%= user.nome %>', '<%= user.email %>')">
+                                                <span class="icon"><i class="fas fa-edit"></i></span>
+                                            </button>
+        
+                                            <form action="/admin/deletar/<%= user.id %>" method="POST" style="display:inline;">
+                                                <button type="submit" class="button is-small is-danger" 
+                                                        onclick="return confirm('Tem certeza que deseja apagar a existência de <%= user.nome %>? Essa ação não tem volta!');"
+                                                        <% if (user.id === admin.id) { %> disabled title="Você não pode apagar a si mesmo!" <% } %>>
+                                                    <span class="icon"><i class="fas fa-trash"></i></span>
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -65,29 +118,102 @@
     <div class="modal" id="modalEditar">
         <div class="modal-background" onclick="fecharModal()"></div>
         <div class="modal-card">
-            <header class="modal-card-head"><p class="modal-card-title">Editar Usuário</p></header>
+            <header class="modal-card-head">
+                <p class="modal-card-title">Editar Usuário</p>
+                <button class="delete" aria-label="close" onclick="fecharModal()"></button>
+            </header>
             <section class="modal-card-body">
-                <form id="formEditar" method="POST">
-                    <div class="field"><label class="label">Nome</label><input class="input" type="text" name="nome" id="editNome"></div>
-                    <div class="field"><label class="label">E-mail</label><input class="input" type="email" name="email" id="editEmail"></div>
-                    <div class="field"><label class="label">Senha</label><input class="input" type="password" name="senha" placeholder="Nova senha (opcional)"></div>
+                <form id="formEditar" method="POST" action="">
+                    <div class="field">
+                        <label class="label">Nome</label>
+                        <div class="control">
+                            <input class="input" type="text" id="editNome" name="nome" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">E-mail</label>
+                        <div class="control">
+                            <input class="input" type="email" id="editEmail" name="email" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Nova Senha (deixe em branco para não alterar)</label>
+                        <div class="control">
+                            <input class="input" type="password" id="editSenha" name="senha">
+                        </div>
+                    </div>
                 </form>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-success" onclick="document.getElementById('formEditar').submit()">Salvar</button>
+                <button class="button is-success" onclick="document.getElementById('formEditar').submit()">Salvar Alterações</button>
                 <button class="button" onclick="fecharModal()">Cancelar</button>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal" id="modalNovo">
+        <div class="modal-background" onclick="fecharModalNovo()"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Cadastrar Novo Administrador</p>
+                <button class="delete" aria-label="close" onclick="fecharModalNovo()"></button>
+            </header>
+            <section class="modal-card-body">
+                <form id="formNovo" method="POST" action="/admin/novo">
+                    <div class="field">
+                        <label class="label">Nome</label>
+                        <div class="control">
+                            <input class="input" type="text" name="nome" required placeholder="Nome do Chefe">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">E-mail</label>
+                        <div class="control">
+                            <input class="input" type="email" name="email" required placeholder="admin@flowquests.com">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Senha</label>
+                        <div class="control">
+                            <input class="input" type="password" name="senha" required placeholder="Senha super segura">
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" onclick="document.getElementById('formNovo').submit()">Criar Admin</button>
+                <button class="button" onclick="fecharModalNovo()">Cancelar</button>
             </footer>
         </div>
     </div>
 
     <script>
         function abrirModalEditar(id, nome, email) {
+            // Preenche os campos do form com os dados do usuário clicado
             document.getElementById('editNome').value = nome;
             document.getElementById('editEmail').value = email;
+            document.getElementById('editSenha').value = ""; // Limpa a senha
+            
+            // Ajusta para onde o formulário vai mandar os dados (A rota do Node.js)
             document.getElementById('formEditar').action = '/admin/editar/' + id;
+            
+            // Mostra o modal na tela
             document.getElementById('modalEditar').classList.add('is-active');
         }
-        function fecharModal() { document.getElementById('modalEditar').classList.remove('is-active'); }
+
+        function fecharModal() {
+            // Esconde o modal
+            document.getElementById('modalEditar').classList.remove('is-active');
+        }
+
+        function abrirModalNovo() {
+            document.getElementById('modalNovo').classList.add('is-active');
+        }
+
+        function fecharModalNovo() {
+            document.getElementById('modalNovo').classList.remove('is-active');
+        }
     </script>
+
 </body>
 </html>
